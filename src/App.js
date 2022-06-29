@@ -2,8 +2,8 @@ import './App.css';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-import Auth from './components/Auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBw-s1xaCUYJvB7uX5pyxiRXOwiLRadY08',
@@ -16,12 +16,14 @@ const firebaseConfig = {
 
 firebase.initializeApp({ firebaseConfig });
 
+const auth = firebase.auth();
+const firestore = firebase.firestore();
+
 function App() {
+  const [user] = useAuthState(auth);
   return (
     <div className="App">
-      <header className="App-header">
-        <Auth />
-      </header>
+      <header className="App-header"></header>
     </div>
   );
 }
