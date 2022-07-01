@@ -1,15 +1,33 @@
 import React from 'react';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import 'firebase/app';
+import { auth } from '../firebase';
+import firebase from 'firebase/app';
 
-export default function SignIn({ auth }) {
-  const signinWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(provider);
-  };
-
+export default function SignIn() {
   return (
     <div>
-      <button onClick={signinWithGoogle}>Sign In With Google</button>
+      <div>
+        <h2>Welcome to superchat</h2>
+        <div className="login-button google">
+          <button
+            onClick={() =>
+              auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+            }
+          >
+            Sign In with Google
+          </button>
+        </div>
+      </div>
+      <br /> <br />
+      <div className="login-button facebook">
+        <button
+          onClick={() =>
+            auth.signInWithRedirect(new firebase.auth.FacebookAuthProvider())
+          }
+        >
+          Sign In with Facebook
+        </button>
+      </div>
     </div>
   );
 }
