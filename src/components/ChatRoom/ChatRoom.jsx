@@ -1,10 +1,12 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { ChatEngine } from 'react-chat-engine';
+import { auth } from '../../firebase';
 
 export default function ChatRoom() {
   return (
-    <>
-      <h1>ChatRoom</h1>
-    </>
+    <div>
+      <ChatEngine />
+    </div>
   );
 }
