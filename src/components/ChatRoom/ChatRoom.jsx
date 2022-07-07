@@ -1,5 +1,10 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 export default function ChatRoom() {
-  return <div>I am the chat room</div>;
+  return (
+    <>
+      <h1>ChatRoom</h1>
+    </>
+  );
 }

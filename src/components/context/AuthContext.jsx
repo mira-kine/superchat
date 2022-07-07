@@ -15,7 +15,9 @@ export const AuthProvider = ({ children }) => {
     auth.onAuthStateChanged((user) => {
       setUser(user);
       setLoading(false);
-      history.push('/chats');
+      if (!user) {
+        history.push('/');
+      }
     });
   }, [user, history]);
 
