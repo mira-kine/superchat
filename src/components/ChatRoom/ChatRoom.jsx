@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { auth } from '../../firebase';
 import { ChatEngine } from 'react-chat-engine';
@@ -9,6 +9,8 @@ export default function ChatRoom() {
   const history = useHistory();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+
+  console.log('user', user);
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -34,9 +36,10 @@ export default function ChatRoom() {
     axios
       .get('https://api.chatengine.io/users/me', {
         headers: {
-          'project-id': process.env.REACT_APP_CHAT_ENGINE_ID,
+          'PROJECT-ID': '4908d6f2-3299-408b-8c7b-6895fe55bcf3',
           'user-name': user.email,
           'user-secret': user.uid,
+          'PRIVATE-KEY': '050fdb53-168d-4861-8fa2-8dc7f3797b33',
         },
       })
       .then(() => {
@@ -56,7 +59,7 @@ export default function ChatRoom() {
           axios
             .post('https://api.chatengine.io/users', formdata, {
               headers: {
-                'private-key': process.env.REACT_APP_CHAT_ENGINE_KEY,
+                'private-key': '050fdb53-168d-4861-8fa2-8dc7f3797b33',
               },
             })
             .then(() => setLoading(false))
@@ -72,9 +75,9 @@ export default function ChatRoom() {
       <button onClick={handleLogout}>Log Out</button>
       <ChatEngine
         height="100vh"
+        projectID="4908d6f2-3299-408b-8c7b-6895fe55bcf3"
         userName={user.email}
         userSecret={user.uid}
-        projectID={process.env.REACT_APP_CHAT_ENGINE_ID}
       />
     </div>
   );
