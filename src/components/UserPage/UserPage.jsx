@@ -3,7 +3,7 @@ import Sidebar from '../Sidebar/Sidebar';
 
 export default function UserPage({ id }) {
   return (
-    <div>
+    <div className="d-flex" style={{ height: '100vh' }}>
       <Sidebar id={id} />
     </div>
   );
