@@ -4,20 +4,22 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 // import { AuthProvider } from './components/context/AuthContext';
 import SignIn from './components/SignIn/SignIn';
 import ChatRoom from './components/ChatRoom/ChatRoom';
+import useLocalStorage from './hooks/useLocalStorage';
+import UserPage from './components/UserPage/UserPage';
 
 function App() {
-  const [id, setId] = useState();
+  // useLocalStorage hook to persist the user's id
+  const [id, setId] = useLocalStorage('id');
 
   return (
     <div className="App">
-      <>{id}</>
       <Router>
         <Switch>
           <Route path="/chatroom">
             <ChatRoom />
           </Route>
           <Route path="/">
-            <SignIn onIdSubmit={setId} />
+            {id ? <UserPage id={id} /> : <SignIn onIdSubmit={setId} />}
           </Route>
         </Switch>
       </Router>
