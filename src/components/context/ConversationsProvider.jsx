@@ -8,7 +8,7 @@ export function useConversations() {
   return useContext(ConversationsContext);
 }
 
-export function ConversationsProvider({ children }) {
+export function ConversationsProvider({ id, children }) {
   const [conversations, setConversations] = useLocalStorage(
     'conversations',
     []
@@ -20,6 +20,14 @@ export function ConversationsProvider({ children }) {
     setConversations((prevConversations) => {
       return [...prevConversations, { recipients, messages: [] }];
     });
+  }
+  // takes messages from others and ourselves
+  function addMessage({ recipients, text, sender }) {
+    // do i need a new conversation or add a new message to an existing conversation
+  }
+
+  function sendMessage(recipients, text) {
+    addMessage({ recipients, text, sender: id });
   }
 
   const formattedConversations = conversations.map((conversation, index) => {
@@ -39,6 +47,7 @@ export function ConversationsProvider({ children }) {
     createConversation,
     selectConversationIndex: setSelectedConversationIndex,
     selectedConversation: formattedConversations[selectedConversationIndex],
+    sendMessage,
   };
 
   return (

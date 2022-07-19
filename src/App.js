@@ -17,7 +17,7 @@ function App() {
       <Router>
         <Switch>
           <ContactsProvider>
-            <ConversationsProvider>
+            <ConversationsProvider id={id}>
               <Route path="/chatroom">
                 <ChatRoom />
               </Route>
