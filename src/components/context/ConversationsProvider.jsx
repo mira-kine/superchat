@@ -13,6 +13,7 @@ export function ConversationsProvider({ id, children }) {
     'conversations',
     []
   );
+  console.log('conversations', conversations);
 
   const [selectedConversationIndex, setSelectedConversationIndex] = useState(0);
   const { contacts } = useContacts();
@@ -25,6 +26,7 @@ export function ConversationsProvider({ id, children }) {
   }
 
   // takes messages from others and ourselves -> show recipient AND sender
+  // Adding message to conversation
   function addMessage({ recipients, text, sender }) {
     // do i need a new conversation or add a new message to an existing conversation
     setConversations((prevConversations) => {
@@ -38,7 +40,7 @@ export function ConversationsProvider({ id, children }) {
           changeMade = true;
           return {
             ...conversation,
-            messages: [conversation.messages, newMessage],
+            messages: [...conversation.messages, newMessage],
           };
         }
         return conversation;
@@ -66,8 +68,22 @@ export function ConversationsProvider({ id, children }) {
       const name = (contact && contact.name) || recipient;
       return { id: recipient, name };
     });
+
+    // formatting each message that is sent
+    const messages = conversation.messages.map((message) => {
+      const contact = contacts.find((contact) => {
+        return contact.id === message.sender;
+      });
+      const name = (contact && contact.name) || message.sender;
+      // flag when the message is from myself
+      const fromMe = id === message.sender;
+      return { ...message, senderName: name, fromMe };
+    });
+
+    // format when conversation is selected in the conversations array
+    // return conversation, messages, recipients, and selected
     const selected = index === selectedConversationIndex;
-    return { ...conversation, recipients, selected };
+    return { ...conversation, messages, recipients, selected };
   });
 
   const value = {
