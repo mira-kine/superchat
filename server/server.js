@@ -1,4 +1,10 @@
-const io = require('socket.io')(5000);
+const cors = require('cors');
+const express = require('express');
+const app = express();
+
+app.use(cors());
+
+const io = require('socket.io')(5001, { cors: { origin: '*' } });
 
 io.on('connection', (socket) => {
   // socket creates a new id everytime you enter, so we want to

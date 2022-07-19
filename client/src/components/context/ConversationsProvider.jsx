@@ -1,6 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { useContacts } from './ContactsProvider';
+import { useSocket } from './SocketProvider';
 
 const ConversationsContext = React.createContext();
 
@@ -13,10 +14,11 @@ export function ConversationsProvider({ id, children }) {
     'conversations',
     []
   );
-  console.log('conversations', conversations);
 
   const [selectedConversationIndex, setSelectedConversationIndex] = useState(0);
   const { contacts } = useContacts();
+  const socket = useSocket();
+  console.log('socket', socket);
 
   // function to create conversation that takes recipient + message
   function createConversation(recipients) {
@@ -27,35 +29,52 @@ export function ConversationsProvider({ id, children }) {
 
   // takes messages from others and ourselves -> show recipient AND sender
   // Adding message to conversation
-  function addMessage({ recipients, text, sender }) {
-    // do i need a new conversation or add a new message to an existing conversation
-    setConversations((prevConversations) => {
-      // have I made any changes?
-      let changeMade = false;
-      const newMessage = { sender, text };
-      // check if any new conversations match convos we already have
-      const newConversations = prevConversations.map((conversation) => {
-        // create function that will see if two arrays match
-        if (arrayEquality(conversation.recipients, recipients)) {
-          changeMade = true;
-          return {
-            ...conversation,
-            messages: [...conversation.messages, newMessage],
-          };
-        }
-        return conversation;
-      });
+  const addMessage = useCallback(
+    ({ recipients, text, sender }) => {
+      // do i need a new conversation or add a new message to an existing conversation
+      setConversations((prevConversations) => {
+        // have I made any changes?
+        let changeMade = false;
+        const newMessage = { sender, text };
+        // check if any new conversations match convos we already have
+        const newConversations = prevConversations.map((conversation) => {
+          // create function that will see if two arrays match
+          if (arrayEquality(conversation.recipients, recipients)) {
+            changeMade = true;
+            return {
+              ...conversation,
+              messages: [...conversation.messages, newMessage],
+            };
+          }
+          return conversation;
+        });
 
-      if (changeMade) {
-        return newConversations;
-      } else {
-        return [...prevConversations, { recipients, messages: [newMessage] }];
-      }
-    });
-  }
+        if (changeMade) {
+          return newConversations;
+        } else {
+          return [...prevConversations, { recipients, messages: [newMessage] }];
+        }
+      });
+    },
+    [setConversations]
+  );
+
+  // useEffect so that it does not continue to make a reference every time a message is sent
+  // to increase efficiency, wrapped addMessage in a useCallback function
+  // that will only run when setConversations is changed
+  // useCallback returns memoized functions, preventing addMessage from rerendering unless the props have changed
+  useEffect(() => {
+    if (socket === null) return;
+
+    socket.on('receive-message', addMessage);
+    // we don't want to keep it on after you receive message
+    return () => socket.off('receive-message');
+  }, [socket, addMessage]);
 
   // function to send message
   function sendMessage(recipients, text) {
+    socket.emit('send-message', { recipients, text });
+    // ^ this will send the message to all our clients, not just us
     addMessage({ recipients, text, sender: id });
   }
 

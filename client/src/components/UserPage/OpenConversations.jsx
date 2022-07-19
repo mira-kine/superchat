@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import { useConversations } from '../context/ConversationsProvider';
-// import './user-page.css';
 
 export default function OpenConversations() {
   const [text, setText] = useState('');
   const { sendMessage, selectedConversation } = useConversations();
+  console.log('selectedConversation.messages', selectedConversation.messages);
   // use last message reference to keep current message displayed
   // useCallback avoids unnecessary renders from child, whereas useEffect creates side effects
   // when dependencies change.
