@@ -3,13 +3,13 @@ import { Button, Form, InputGroup } from 'react-bootstrap';
 import { useConversations } from '../context/ConversationsProvider';
 
 export default function OpenConversations() {
-  const [text, setText] = useState();
+  const [text, setText] = useState('');
   const { sendMessage, selectedConversation } = useConversations();
 
   function handleSubmit(e) {
     e.preventDefault();
     sendMessage(
-      selectedConversation.recipient.map((recipient) => recipient.id),
+      selectedConversation.recipients.map((recipient) => recipient.id),
       text
     );
     setText('');
@@ -28,9 +28,7 @@ export default function OpenConversations() {
               onChange={(e) => setText(e.target.value)}
               style={{ height: '75px', resize: 'none' }}
             />
-            <InputGroup.Append>
-              <Button type="submit">Send</Button>
-            </InputGroup.Append>
+            <Button type="submit">Send</Button>
           </InputGroup>
         </Form.Group>
       </Form>

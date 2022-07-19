@@ -1,8 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-// import { AuthProvider } from './components/context/AuthContext';
 import SignIn from './components/SignIn/SignIn';
-import ChatRoom from './components/ChatRoom/ChatRoom';
 import useLocalStorage from './hooks/useLocalStorage';
 import UserPage from './components/UserPage/UserPage';
 import { ContactsProvider } from './components/context/ContactsProvider';
@@ -12,24 +9,15 @@ function App() {
   // useLocalStorage hook to persist the user's id
   const [id, setId] = useLocalStorage('id');
 
-  return (
-    <div className="App">
-      <Router>
-        <Switch>
-          <ContactsProvider>
-            <ConversationsProvider id={id}>
-              <Route path="/chatroom">
-                <ChatRoom />
-              </Route>
-              <Route path="/">
-                {id ? <UserPage id={id} /> : <SignIn onIdSubmit={setId} />}
-              </Route>
-            </ConversationsProvider>
-          </ContactsProvider>
-        </Switch>
-      </Router>
-    </div>
+  const userPage = (
+    <ContactsProvider>
+      <ConversationsProvider id={id}>
+        <UserPage id={id} />
+      </ConversationsProvider>
+    </ContactsProvider>
   );
+
+  return id ? userPage : <SignIn onIdSubmit={setId} />;
 }
 
 export default App;

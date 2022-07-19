@@ -13,23 +13,51 @@ export function ConversationsProvider({ id, children }) {
     'conversations',
     []
   );
+
   const [selectedConversationIndex, setSelectedConversationIndex] = useState(0);
   const { contacts } = useContacts();
 
+  // function to create conversation that takes recipient + message
   function createConversation(recipients) {
     setConversations((prevConversations) => {
       return [...prevConversations, { recipients, messages: [] }];
     });
   }
-  // takes messages from others and ourselves
+
+  // takes messages from others and ourselves -> show recipient AND sender
   function addMessage({ recipients, text, sender }) {
     // do i need a new conversation or add a new message to an existing conversation
+    setConversations((prevConversations) => {
+      // have I made any changes?
+      let changeMade = false;
+      const newMessage = { sender, text };
+      // check if any new conversations match convos we already have
+      const newConversations = prevConversations.map((conversation) => {
+        // create function that will see if two arrays match
+        if (arrayEquality(conversation.recipients, recipients)) {
+          changeMade = true;
+          return {
+            ...conversation,
+            messages: [conversation.messages, newMessage],
+          };
+        }
+        return conversation;
+      });
+
+      if (changeMade) {
+        return newConversations;
+      } else {
+        return [...prevConversations, { recipients, messages: [newMessage] }];
+      }
+    });
   }
 
+  // function to send message
   function sendMessage(recipients, text) {
     addMessage({ recipients, text, sender: id });
   }
 
+  // unify formatting of conversations
   const formattedConversations = conversations.map((conversation, index) => {
     const recipients = conversation.recipients.map((recipient) => {
       const contact = contacts.find((contact) => {
@@ -55,4 +83,17 @@ export function ConversationsProvider({ id, children }) {
       {children}
     </ConversationsContext.Provider>
   );
+}
+// creating function outside of component since it doesn't affect it
+function arrayEquality(a, b) {
+  if (a.length !== b.length) return false;
+  // sort
+  a.sort();
+  b.sort();
+  // loop through each array and see if each element in a matches b
+  // .every() tests whether all elements pass the test implemented by provided function
+  // ---> returns boolean
+  return a.every((element, index) => {
+    return element === b[index];
+  });
 }
