@@ -5,6 +5,7 @@ import SignIn from './components/SignIn/SignIn';
 import ChatRoom from './components/ChatRoom/ChatRoom';
 import useLocalStorage from './hooks/useLocalStorage';
 import UserPage from './components/UserPage/UserPage';
+import { ContactsProvider } from './components/context/ContactsProvider';
 
 function App() {
   // useLocalStorage hook to persist the user's id
@@ -17,9 +18,11 @@ function App() {
           <Route path="/chatroom">
             <ChatRoom />
           </Route>
-          <Route path="/">
-            {id ? <UserPage id={id} /> : <SignIn onIdSubmit={setId} />}
-          </Route>
+          <ContactsProvider>
+            <Route path="/">
+              {id ? <UserPage id={id} /> : <SignIn onIdSubmit={setId} />}
+            </Route>
+          </ContactsProvider>
         </Switch>
       </Router>
     </div>
