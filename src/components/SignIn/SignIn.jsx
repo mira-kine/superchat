@@ -1,33 +1,38 @@
-import React from 'react';
-import '../../firebase';
-import {
-  GoogleAuthProvider,
-  getAuth,
-  signInWithRedirect,
-  FacebookAuthProvider,
-} from 'firebase/auth';
+import React, { useRef } from 'react';
+import { Button, Container, Form } from 'react-bootstrap';
+import { v4 as uuidV4 } from 'uuid';
 
-export default function SignIn() {
-  const GProvider = new GoogleAuthProvider();
-  const FbProvider = new FacebookAuthProvider();
-  const auth = getAuth();
+export default function SignIn({ onIdSubmit }) {
+  // instead of onchange, use a useRef hook to keep track.
+  // References input control to know what value
+  const idRef = useRef();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onIdSubmit(idRef.current.value);
+  };
+
+  function createNewId() {
+    onIdSubmit(uuidV4());
+  }
 
   return (
-    <div>
-      <div>
-        <h2>Welcome to superchat</h2>
-        <div className="login-button google">
-          <button onClick={() => signInWithRedirect(auth, GProvider)}>
-            Sign In with Google
-          </button>
-        </div>
-      </div>
-      <br /> <br />
-      <div className="login-button facebook">
-        <button onClick={() => signInWithRedirect(auth, FbProvider)}>
-          Sign In with Facebook
-        </button>
-      </div>
-    </div>
+    <Container
+      className="align-items-center d-flex"
+      style={{ height: '100vh' }}
+    >
+      <Form onSubmit={handleSubmit} className="w-100">
+        <Form.Group>
+          <Form.Label>Enter Your Id</Form.Label>
+          <Form.Control type="text" ref={idRef} required></Form.Control>
+        </Form.Group>
+        <Button type="submit" className="mr-2">
+          Sign In
+        </Button>
+        <Button onClick={createNewId} variant="secondary">
+          Create a New id
+        </Button>
+      </Form>
+    </Container>
   );
 }
