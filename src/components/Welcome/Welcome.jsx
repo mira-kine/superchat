@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Welcome() {
   return (
-    <div className="d-flex flex-column justify-content-center text-center vw-100">
+    <div className="d-flex flex-column ml-4 justify-content-center align-self-centertext-center vw-80">
       <h2>Not sure what to do?</h2>
       <h4>✨ Here are some starter steps ✨: </h4>
       <ul className="list-group">
