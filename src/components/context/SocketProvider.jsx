@@ -4,15 +4,13 @@ import io from 'socket.io-client';
 
 const SocketContext = React.createContext();
 
-const ENDPOINT = 'http://localhost:5001';
-
 export function useSocket() {
   return useContext(SocketContext);
 }
 
 // server uses id
 export function SocketProvider({ id, children }) {
-  const socket = io(ENDPOINT);
+  const socket = io(process.env.ENDPOINT_KEY);
 
   useEffect(() => {
     socket.on();
